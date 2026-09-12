@@ -1,0 +1,42 @@
+<button class="chat-fab" (click)="toggleChat()">
+  <span *ngIf="!isOpen">💬</span>
+  <span *ngIf="isOpen">✕</span>
+</button>
+
+<div class="chat-container" [class.open]="isOpen">
+  <div class="chat-header">
+    <div class="header-status">
+      <span class="status-indicator"></span>
+      <span>Invoice AI Validator</span>
+    </div>
+  </div>
+
+  <div class="chat-body">
+    <div *ngIf="messages.length === 0" class="empty-state">
+      Type your message below to chat in real time.
+    </div>
+
+    <div
+      *ngFor="let msg of messages"
+      [ngClass]="{'msg-user': msg.sender === 'user', 'msg-bot': msg.sender === 'bot'}"
+      class="message-bubble"
+    >
+      {{ msg.text }}
+      <span *ngIf="msg.sender === 'bot' && isStreaming" class="cursor">|</span>
+    </div>
+  </div>
+
+  <div class="chat-form">
+    <div class="action-row">
+      <input
+        type="text"
+        [(ngModel)]="userQuery"
+        placeholder="Type your message here..."
+        (keyup.enter)="submitCheck()"
+      />
+      <button (click)="submitCheck()" [disabled]="!userQuery.trim()">
+        Send
+      </button>
+    </div>
+  </div>
+</div>
