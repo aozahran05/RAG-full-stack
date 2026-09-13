@@ -12,6 +12,8 @@ export interface InvoicePayload {
   invoiceId: string;
   amount: number;
   vendorName: string;
+  errorCode?: string;      // Added for dynamic errors
+  errorMessage?: string;   // Added for dynamic errors
   query: string;
 }
 
@@ -28,7 +30,6 @@ export class WebsocketService {
 
   private initWebSocket(): void {
     this.stompClient = new Client({
-      // Connects to the Spring Boot endpoint we created earlier
       webSocketFactory: () => new SockJS('http://localhost:8080/ws-invoice'),
       reconnectDelay: 5000,
       debug: (msg: string) => console.log('[STOMP]:', msg)
@@ -36,7 +37,6 @@ export class WebsocketService {
 
     this.stompClient.onConnect = () => {
       console.log('Connected to Spring Boot WebSocket');
-      // Listens to the stream coming from the backend
       this.stompClient.subscribe('/topic/invoice-stream', (message: IMessage) => {
         if (message.body) {
           const parsed: ChatToken = JSON.parse(message.body);
